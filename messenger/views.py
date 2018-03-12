@@ -2,8 +2,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Message
 from .forms import ComposeMessageForm
 
-# Create your views here.
-
 def get_inbox(request):
     return render(request, "messenger/inbox.html")
 
