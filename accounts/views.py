@@ -1,14 +1,19 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages, auth
+from django.contrib.auth.decorators import login_required
+
 from .forms import UserLoginForm, UserRegistrationForm
 
+
 # Create your views here.
+
 def logout(request):
     auth.logout(request)
     messages.success(request, 'You have successfully logged out')
     return redirect("home")
     
 def login(request):
+    redirect_to = request.GET.get('next', 'home')
     if request.method == "POST":
         form = UserLoginForm(request.POST)
         if form.is_valid():
@@ -17,7 +22,7 @@ def login(request):
             if user is not None:
                 auth.login(request, user)
                 messages.success(request, "You have successfully logged in")
-                return redirect("home")
+                return redirect(redirect_to)
             else:
                 form.add_error(None, "Your username or password was not recognised")
             
@@ -26,6 +31,7 @@ def login(request):
 
     return render(request, "accounts/login.html", {"form": form})
     
+@login_required(login_url='/accounts/login')
 def profile(request):
     return render(request, "accounts/profile.html")
     
